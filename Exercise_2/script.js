@@ -1,7 +1,7 @@
 console.log("Exercise 6-2");
 
 //Set up drawing environment with margin conventions
-var margin = {t:20,r:20,b:20,l:20};
+var margin = {t:30,r:30,b:30,l:30};
 var width = document.getElementById('plot').clientWidth - margin.l - margin.r,
     height = document.getElementById('plot').clientHeight - margin.t - margin.b;
 
@@ -12,6 +12,15 @@ var plot = d3.select('#plot')
     .append('g')
     .attr('class','plot-area')
     .attr('transform','translate('+margin.l+','+margin.t+')');
+
+var axisX = d3.svg.axis()
+        .orient('bottom')
+        /*.tickValues([1000,5000,10000,])*/
+        .tickSize(-height),
+    axisY = d3.svg.axis()
+        .orient('left')
+        .tickSize(-width);
+        //what are the scales with which we draw these axis
 
 //Start importing data
 d3.csv('../data/world_bank_2012.csv', parse, dataLoaded);
@@ -40,6 +49,18 @@ function dataLoaded(error, rows){
     //with mined information, we can now set up the scales
     var scaleX = d3.scale.linear().domain([0,50000]).range([0,width]),
         scaleY = d3.scale.linear().domain([0,100]).range([height,0]);
+
+    axisX.scale(scaleX);
+    axisY.scale(scaleY);
+
+    plot
+        .append('g')
+        .attr('class', 'axis axis-x')
+        .call(axisX)
+        .attr('transform','translate(0, '+height+')');
+    plot.append('g').attr('class', 'axis axis-y').call(axisY)
+        .attr('transform','translate(, 6)');;
+
 
     //draw
     rows.forEach(function(row){
